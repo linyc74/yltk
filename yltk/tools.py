@@ -1,30 +1,6 @@
 import os
 from typing import List, Tuple, Any, Optional
-from subprocess import check_call, check_output
-from .logger import Logger
-
-
-class Caller:
-
-    mock: bool
-
-    def __init__(self, mock: bool):
-        self.mock = mock
-        self.logger = Logger(name=f'{self.__class__.__name__}', level='INFO')
-
-    def call(self, cmd: str):
-        self.__log(cmd)
-        if not self.mock:
-            check_call(cmd, shell=True)
-
-    def check_output(self, cmd: str) -> str:
-        self.__log(cmd)
-        return '' if self.mock \
-            else check_output(cmd, shell=True).decode()
-
-    def __log(self, cmd: str):
-        h = 'MOCK' if self.mock else 'CMD'
-        self.logger.info(f'{h}: {cmd}')
+from .template import Caller
 
 
 def call(cmd: str, mock: bool = False):
