@@ -88,3 +88,59 @@ def get_dirs(
         ret.sort()
     return ret
 
+
+def get_temp_path(
+        prefix: str = 'temp',
+        suffix: str = '') -> str:
+    """
+    Returns a temp file name that does not exist, i.e. temp000.txt
+
+    Args:
+        prefix:
+            Can include the path
+
+        suffix:
+            Usually the file extension
+    """
+    i = 1
+    while True:
+        fpath = f'{prefix}{i:03}{suffix}'
+        if not os.path.exists(fpath):
+            return fpath
+        i += 1
+
+
+def gzip(
+        file: str,
+        dstdir: Optional[str] = None,
+        keep: bool = True) -> str:
+
+    if dstdir is None:
+        dstdir = os.path.dirname(file)
+
+    fname = os.path.basename(file) + '.gz'
+
+    call(f'gzip --stdout {file} > {os.path.join(dstdir, fname)}')
+
+    if not keep:
+        os.remove(file)
+
+    return f'{dstdir}/{fname}'
+
+
+def gunzip(
+        file: str,
+        dstdir: Optional[str] = None,
+        keep: bool = True) -> str:
+
+    if dstdir is None:
+        dstdir = os.path.dirname(file)
+
+    fname = os.path.basename(file)[:-3]
+
+    call(f'gzip --decompress --stdout {file} > {os.path.join(dstdir, fname)}')
+
+    if not keep:
+        os.remove(file)
+
+    return f'{dstdir}/{fname}'
