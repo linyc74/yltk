@@ -13,10 +13,10 @@ class TestNAS(unittest.TestCase):
             password_env_var='MY_NAS_PASSWORD'
         )
 
-    def test_download(self):
+    def __test_download(self):
         self.nas.download(src='~/Drive/Working/21_0515_deseq2', dst='./')
 
-    def test_upload(self):
+    def __test_upload(self):
         f = './temp.txt'
         open(f, 'w').close()
         self.nas.upload(src=f, dst='~/Drive')

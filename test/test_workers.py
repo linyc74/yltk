@@ -1,6 +1,6 @@
 import unittest
-from yltk.workers import CmdWorker, DockerBuilder, DockerWorker
 from yltk.path import LocalFile, LocalDir
+from yltk.workers import CmdWorker, DockerBuilder, DockerWorker
 
 
 class TestCmdWorker(unittest.TestCase):
