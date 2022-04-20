@@ -56,6 +56,7 @@ class Processor:
     outdir: str
     threads: int
     debug: bool
+    mock: bool
 
     logger: Logger
 
@@ -66,6 +67,7 @@ class Processor:
         self.outdir = settings.outdir
         self.threads = settings.threads
         self.debug = settings.debug
+        self.mock = settings.mock
 
         self.logger = Logger(
             name=self.__class__.__name__,
@@ -74,7 +76,8 @@ class Processor:
 
     def call(self, cmd: str):
         self.logger.info(cmd)
-        subprocess.check_call(cmd, shell=True)
+        if not self.mock:
+            subprocess.check_call(cmd, shell=True)
 
 
 class Caller:
