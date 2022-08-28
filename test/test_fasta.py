@@ -1,4 +1,4 @@
-from ngslite.fasta import FastaParser, FastaWriter
+from yltk.fasta import FastaParser, FastaWriter
 from .setup import TestCase
 
 
