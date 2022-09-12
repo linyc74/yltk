@@ -73,6 +73,12 @@ class VcfWriter:
         self.__fh = open(vcf, 'w')
         self.header = None
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
     def write_header(self, header: str):
         assert self.header is None
         self.header = header.strip()
@@ -100,7 +106,7 @@ class VcfWriter:
         # values need to follow the order of self.columns
         values = [variant[c] for c in self.columns]
 
-        self.__fh.write('\t'.join(values) + '\n')
+        self.__fh.write('\t'.join(map(str, values)) + '\n')
 
     def close(self):
         self.__fh.close()

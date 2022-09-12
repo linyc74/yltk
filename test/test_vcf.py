@@ -209,12 +209,12 @@ fileformat=VCFv4.3
         writer.write_header(header)
 
         variant = {
-            'CHROM': '1',
-            'POS': '101',
+            'CHROM': 1,
+            'POS': 101,
             'ID': 'rs6054257',
             'REF': 'G',
             'ALT': 'A',
-            'QUAL': '29',
+            'QUAL': 29,
             'FILTER': 'PASS',
             'INFO': 'NS=3;DP=14;AF=0.5;DB;H2',
             'FORMAT': 'GT:GQ:DP:HQ',
