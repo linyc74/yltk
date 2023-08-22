@@ -1,6 +1,6 @@
 import os
-from typing import List, Tuple, Any, Optional
 from os.path import join, exists, basename, dirname
+from typing import List, Tuple, Any, Optional, Dict, Union
 from .template import Caller
 
 
@@ -11,17 +11,23 @@ def call(cmd: str, mock: bool = False):
 
 def build_cmd(
         base_cmd: Optional[str],
-        args: List[Tuple[str, Any]]) -> str:
+        args: Union[Dict[str, Any], List[Tuple[str, Any]]]) -> str:
 
     lines = []
 
     if base_cmd:
         lines.append(base_cmd)
 
+    if type(args) is dict:
+        args = args.items()
+
     for key, val in args:
         d = '-' if len(key) == 1 else '--'
-        val = '' if val is None else val
-        lines.append(f'{d}{key} {val}')
+        if val is None:
+            line = f'{d}{key}'
+        else:
+            line = f'{d}{key} {val}'
+        lines.append(line)
 
     return ' \\\n'.join(lines)
 
