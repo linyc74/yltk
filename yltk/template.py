@@ -36,11 +36,11 @@ class Settings:
 
     def __init__(
             self,
-            workdir: str,
-            outdir: str,
-            threads: int,
-            debug: bool,
-            mock: bool):
+            workdir: str = './workdir',
+            outdir: str = './outdir',
+            threads: int = 1,
+            debug: bool = False,
+            mock: bool = False):
 
         self.workdir = workdir
         self.outdir = outdir
