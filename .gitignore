@@ -10,3 +10,5 @@ __pycache__/
 
 # Packaging
 *.egg-info
+
+todo.md

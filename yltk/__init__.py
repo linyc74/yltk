@@ -1,4 +1,3 @@
-from .nas import NAS
 from .vcf import VcfParser, VcfWriter
 from .path import LocalFile, LocalDir
 from .template import Settings, Processor, Caller
