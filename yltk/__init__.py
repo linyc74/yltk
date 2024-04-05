@@ -5,4 +5,4 @@ from .workers import CmdWorker, DockerWorker, DockerBuilder
 from .fasta import FastaParser, FastaWriter, read_fasta, write_fasta, subset_fasta
 from .tools import call, build_cmd, get_files, get_dirs, get_temp_path, gzip, gunzip
 
-__version__ = '1.3.4'
+__version__ = '1.3.5'

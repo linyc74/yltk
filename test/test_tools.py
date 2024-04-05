@@ -18,10 +18,11 @@ ls \\
     def test_dict_args(self):
         actual = build_cmd(
             base_cmd='ls',
-            args={'a': 1, 'bb': None}
+            args={'a': 1, 'bb': None, 'file': 'with blank space.txt'}
         )
         expected = f'''\
 ls \\
 -a 1 \\
---bb'''
+--bb \\
+--file "with blank space.txt"'''
         self.assertEqual(actual, expected)

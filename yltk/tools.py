@@ -26,6 +26,8 @@ def build_cmd(
         if val is None:
             line = f'{d}{key}'
         else:
+            if ' ' in str(val):
+                val = f'"{val}"'
             line = f'{d}{key} {val}'
         lines.append(line)
 
