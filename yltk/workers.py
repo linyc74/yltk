@@ -1,89 +1,118 @@
-import os
+from os.path import abspath, dirname
 from typing import List, Union, Optional
 from .template import Caller
-from .path import LocalFile, LocalDir
+
+
+class LocalFile:
+
+    path: str
+    dirpath: str
+
+    def __init__(self, path: str):
+        self.path = abspath(path)
+        self.dirpath = dirname(self.path)
+
+    def __str__(self):
+        return self.path
+
+    def __repr__(self):
+        return f"LocalFile(path='{self.path}')"
+
+    def to_docker_volume(self) -> str:
+        return f'--volume "{self.dirpath}":"{self.dirpath}"'
+
+
+class LocalDir:
+
+    path: str
+
+    def __init__(self, path: str):
+        self.path = abspath(path)
+
+    def __str__(self):
+        return self.path
+
+    def __repr__(self):
+        return f"LocalDir(path='{self.path}')"
+
+    def to_docker_volume(self) -> str:
+        return f'--volume "{self.path}":"{self.path}"'
 
 
 class CmdWorker:
 
-    github_repo: str
+    repo: Optional[str]
     caller: Caller
-    cmd: str
 
-    def __init__(self, github_repo: str, mock: bool = False):
-        self.github_repo = github_repo
+    def __init__(self, repo: Optional[str], mock: bool = False):
+        self.repo = repo
         self.caller = Caller(mock=mock)
 
     def run(self, cmd: str):
-        self.cmd = cmd
         self.__clone_repo()
-        self.__execute()
+        self.caller.call(cmd)
         self.__clean_up()
 
     def __clone_repo(self):
-        self.caller.call(f'git clone {self.github_repo}')
-
-    def __execute(self):
-        self.caller.call(self.cmd)
+        if self.repo is not None:
+            if self.repo.startswith('https://github.com'):
+                self.caller.call(f'git clone {self.repo}')
 
     def __clean_up(self):
-        # https://github.com/USER/REPO.git -> REPO
-        repo_name = self.github_repo.split('/')[-1].split('.')[0]
-        self.caller.call(f'rm -rf {repo_name}')
+        if self.repo is not None:
+            if self.repo.startswith('https://github.com'):  # clean up only if repo was cloned from github
+                repo_name = self.repo.split('/')[-1].split('.')[0]  # https://github.com/USER/REPO.git -> REPO
+                self.caller.call(f'rm -rf {repo_name}')
 
 
 class DockerBuilder:
 
-    IMAGE_TAG = 'latest'
+    DEFAULT_TAG = 'latest'
 
     docker_hub_user: str
-    github_repo: str
+    repo: str
     caller: Caller
 
-    repo_name: str
-    image: str
+    __repo: str
+    __image: str
 
     def __init__(
             self,
             docker_hub_user: str,
-            github_repo: str,
+            repo: str,
             mock: bool = False):
 
         self.docker_hub_user = docker_hub_user
-        self.github_repo = github_repo
+        self.repo = repo
         self.caller = Caller(mock=mock)
 
     def build(self) -> str:
         self.__clone_repo()
-        self.__set_repo_name()
         self.__set_image()
         self.__build()
         self.__clean_up()
-        return self.image
+        return self.__image
 
     def __clone_repo(self):
-        self.caller.call(f'git clone {self.github_repo}')
-
-    def __set_repo_name(self):
-        """
-        https://github.com/USER/REPO_NAME.git -> REPO_NAME
-        """
-        self.repo_name = self.github_repo.split('/')[-1].split('.')[0]
+        if self.repo.startswith('https://github.com'):
+            self.caller.call(f'git clone {self.repo}')
 
     def __set_image(self):
-        """
-        REPO_NAME -> repo-name
-        """
-        repo_name = self.repo_name.lower().replace('_', '-')
-        self.image = f'{self.docker_hub_user}/{repo_name}:{self.IMAGE_TAG}'
+        repo = self.repo
+
+        if repo.startswith('https://github.com'):
+            repo = repo.split('/')[-1].split('.')[0]  # https://github.com/USER/REPO.git -> REPO
+        repo = repo.lower().replace('_', '-')  # REPO_NAME -> repo-name
+
+        self.__repo = repo
+        self.__image = f'{self.docker_hub_user}/{repo}:{self.DEFAULT_TAG}'
 
     def __build(self):
-        os.chdir(self.repo_name)
-        self.caller.call(f'docker build -t {self.image} .')
+        self.caller.call(f'cd {self.__repo} && docker build -t {self.__image} . && cd ..')
 
     def __clean_up(self):
-        os.chdir('../')
-        self.caller.call(f'rm -rf {self.repo_name}')
+        if self.repo.startswith('https://github.com'):  # clean up only if repo was cloned from github
+            self.caller.call(f'rm -rf {self.__repo}')
 
 
 MOUNT_TYPE = Union[

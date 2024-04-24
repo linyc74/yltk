@@ -1,8 +1,7 @@
 from .vcf import VcfParser, VcfWriter
-from .path import LocalFile, LocalDir
 from .template import Settings, Processor, Caller
-from .workers import CmdWorker, DockerWorker, DockerBuilder
+from .workers import LocalFile, LocalDir, CmdWorker, DockerWorker, DockerBuilder
 from .fasta import FastaParser, FastaWriter, read_fasta, write_fasta, subset_fasta
 from .tools import call, build_cmd, get_files, get_dirs, get_temp_path, gzip, gunzip
 
-__version__ = '1.3.5'
+__version__ = '1.4.0-beta'
