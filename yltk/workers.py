@@ -102,10 +102,11 @@ class DockerBuilder:
 
         if repo.startswith('https://github.com'):
             repo = repo.split('/')[-1].split('.')[0]  # https://github.com/USER/REPO.git -> REPO
-        repo = repo.lower().replace('_', '-')  # REPO_NAME -> repo-name
 
         self.__repo = repo
-        self.__image = f'{self.docker_hub_user}/{repo}:{self.DEFAULT_TAG}'
+
+        name = repo.lower().replace('_', '-')  # REPO_NAME -> repo-name
+        self.__image = f'{self.docker_hub_user}/{name}:{self.DEFAULT_TAG}'
 
     def __build(self):
         self.caller.call(f'cd {self.__repo} && docker build -t {self.__image} . && cd ..')

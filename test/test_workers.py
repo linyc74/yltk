@@ -22,14 +22,14 @@ class TestDockerBuilder(TestCase):
     def test_github(self):
         DockerBuilder(
             docker_hub_user='user',
-            repo='https://github.com/USER/REPO.git',
+            repo='https://github.com/account/my_repo.git',
             mock=True
         ).build()
 
     def test_local(self):
         DockerBuilder(
             docker_hub_user='user',
-            repo='REPO',
+            repo='my_repo',
             mock=True
         ).build()
 
